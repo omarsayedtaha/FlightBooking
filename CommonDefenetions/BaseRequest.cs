@@ -9,7 +9,7 @@ namespace CommonDefenitions
 {
     public class BaseRequest
     {
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public string Role { get; set; }
         public int PageIndex { get; set; }
         public int PageSize { get; set; }

@@ -1,4 +1,6 @@
-﻿namespace Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Domain
 {
     public class Flight 
     {
@@ -12,7 +14,22 @@
         public DateTime ArrivalTime { get; set; }
         public int AvailableSeats { get; set; }
         public decimal Price { get; set; }
+
+        [NotMapped]
+        public TimeOnly Duration { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public string CalculateDuration(DateTime departure, DateTime arrival)
+        {
+            TimeSpan duration = arrival - departure;
+            if (duration < TimeSpan.Zero)
+            {
+                throw new ArgumentException("Arrival time must be after the departure time.");
+            }
+            return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+        }
     }
+
+
 }

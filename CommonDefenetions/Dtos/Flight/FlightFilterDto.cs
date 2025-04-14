@@ -8,8 +8,8 @@ namespace CommonDefenitions.Dtos.Flight
 {
     public class FlightFilterDto
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
-        public DateOnly Date { get; set; }
+        public DateOnly? Date { get; set; }
     }
 }

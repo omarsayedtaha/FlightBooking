@@ -1,6 +1,7 @@
 
 using System;
 using System.Text;
+using Booking.Helper;
 using CommonDefenitions.Helper;
 using Domain;
 using Infrastructure;
@@ -24,29 +25,7 @@ namespace Bookings
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-
-            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-           .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"], 
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])),
-                };
-            });
+            Services.AddServices(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
@@ -73,6 +52,8 @@ namespace Bookings
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             app.UseAuthentication();
             app.UseAuthorization();

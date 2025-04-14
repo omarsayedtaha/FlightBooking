@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Application.Features.User.Login
+namespace Application.Features.User.Login.Commands
 {
     public class UserLogin
     {
@@ -23,15 +23,15 @@ namespace Application.Features.User.Login
         private readonly SignInManager<Domain.User> signInManager;
         private readonly IConfiguration configuration;
 
-        public UserLogin(UserManager<Domain.User>userManager
-            ,SignInManager<Domain.User> signInManager,
+        public UserLogin(UserManager<Domain.User> userManager
+            , SignInManager<Domain.User> signInManager,
             IConfiguration configuration)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
         }
-        
+
         public async Task<BaseResponse<UserDto>> Login(LoginDto loginmodel)
         {
             var response = new BaseResponse<UserDto>();
@@ -46,14 +46,14 @@ namespace Application.Features.User.Login
                 response.Message = string.Join(",", result.Errors.Select(x => x.ErrorMessage));
                 return response;
             }
-            var user = userManager.Users.FirstOrDefault(x=>x.Email==loginmodel.Email);
+            var user = userManager.Users.FirstOrDefault(x => x.Email == loginmodel.Email);
             if (user == null)
             {
-                response.StatusCode=HttpStatusCode.BadRequest;
+                response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = "Email not found";
                 return response;
             }
-            var userResult =await signInManager.PasswordSignInAsync(user, loginmodel.Password, false, false);
+            var userResult = await signInManager.PasswordSignInAsync(user, loginmodel.Password, false, false);
             if (userResult.IsNotAllowed)
             {
                 response.Message = "Login failed";

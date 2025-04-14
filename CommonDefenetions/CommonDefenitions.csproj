@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dtos\Bookings\NewFolder\**" />
+    <EmbeddedResource Remove="Dtos\Bookings\NewFolder\**" />
+    <None Remove="Dtos\Bookings\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 

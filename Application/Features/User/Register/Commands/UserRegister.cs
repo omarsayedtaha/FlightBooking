@@ -10,7 +10,7 @@ using CommonDefenitions.Dtos.User;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Features.User.Register
+namespace Application.Features.User.Register.Commands
 {
     public class UserRegister
     {
@@ -57,7 +57,9 @@ namespace Application.Features.User.Register
                 PassportNumber = registerDto.PassportNumber,
                 CreatedAt = DateTime.Now,
                 PhoneNumber = registerDto.PhoneNumber,
+                SecurityStamp = Guid.NewGuid().ToString()
             };
+            var check = await userManager.CreateAsync(User, registerDto.Password);
 
             if (registerDto.IsAdmin)
             {
@@ -67,7 +69,6 @@ namespace Application.Features.User.Register
             {
                 await userManager.AddToRoleAsync(User, "User");
             }
-            var check = await userManager.CreateAsync(User, registerDto.Password);
 
             if (check.Succeeded)
             {
