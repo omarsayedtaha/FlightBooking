@@ -1,4 +1,4 @@
-﻿namespace E_Learning.Dtos
+﻿namespace CommonDefenitions.Dtos.User
 {
     public class RegisterDto
     {

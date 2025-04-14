@@ -1,8 +1,7 @@
 ﻿using Application.Features.User.Login;
 using Application.Features.User.Register;
-using CommonDefenitions.Dtos;
+using CommonDefenitions.Dtos.User;
 using Domain;
-using E_Learning.Dtos;
 using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

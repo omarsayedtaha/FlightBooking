@@ -13,7 +13,7 @@ namespace Bookings
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +31,7 @@ namespace Bookings
 
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-           .AddEntityFrameworkStores<ApplicationDbContext>()
-           .AddDefaultTokenProviders();
+           .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -45,18 +44,28 @@ namespace Bookings
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"], 
                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])) 
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])),
                 };
             });
 
             var app = builder.Build();
 
-            using (var servicescope = app.Services.GetRequiredService<IServiceProvider>().CreateScope())
+            var servicescope = app.Services.GetRequiredService<IServiceProvider>().CreateScope();
+            var context = servicescope.ServiceProvider.GetService<ApplicationDbContext>();
+            var loggerfactory = servicescope.ServiceProvider.GetService<ILoggerFactory>();
+            var logger = loggerfactory.CreateLogger<Program>();
+
+            try
             {
-                var context = servicescope.ServiceProvider.GetService<ApplicationDbContext>();
+                var Database = context.Database;
+                await Database.MigrateAsync();
                 DataSeeding.SeedData(context);
             }
-            // Configure the HTTP request pipeline.
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());    
+            }
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

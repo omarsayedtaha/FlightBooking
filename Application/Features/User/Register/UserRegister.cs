@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CommonDefenitions;
-using E_Learning.Dtos;
+using CommonDefenitions.Dtos.User;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 

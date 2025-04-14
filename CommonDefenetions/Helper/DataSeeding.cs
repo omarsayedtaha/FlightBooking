@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain;
 using Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 namespace CommonDefenitions.Helper
 {
@@ -20,36 +21,39 @@ namespace CommonDefenitions.Helper
                     new Flight
                     {
                         Airline = "SkyWay Airlines",
+                        FlightNumber ="SK100",
                         DepartureLocation = "New York, JFK",
                         ArrivalLocation = "London, LHR",
-                        DepartureTime = new TimeOnly(8, 45), 
-                        ArrivalTime = new TimeOnly(21, 30), 
+                        DepartureTime = DateTime.Now,
+                        ArrivalTime = DateTime.Now.AddHours(2),
                         AvailableSeats = 120,
-                        PricePerSeat = 349m,
+                        Price = 349m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     },
                     new Flight
                     {
                         Airline = "SkyWay Airlines",
+                        FlightNumber = "SK200",
                         DepartureLocation = "New York, JFK",
                         ArrivalLocation = "London, LHR",
-                        DepartureTime = new TimeOnly(11, 30), 
-                        ArrivalTime = new TimeOnly(23, 45), 
+                        DepartureTime = DateTime.Now,
+                        ArrivalTime = DateTime.Now.AddHours(3),
                         AvailableSeats = 95,
-                        PricePerSeat = 429m,
+                        Price = 429m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     },
                     new Flight
                     {
                         Airline = "SkyWay Airlines",
+                        FlightNumber= "SK300",
                         DepartureLocation = "New York, JFK",
                         ArrivalLocation = "London, LHR",
-                        DepartureTime = new TimeOnly(18, 15), 
-                        ArrivalTime = new TimeOnly(6, 30), 
+                        DepartureTime = DateTime.Now.AddDays(1),
+                        ArrivalTime = DateTime.Now.AddDays(1).AddHours(5),
                         AvailableSeats = 150,
-                        PricePerSeat = 289m,
+                        Price = 289m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     }
@@ -58,8 +62,19 @@ namespace CommonDefenitions.Helper
                 context.Flights.AddRange(flights);
 
             }
-            await context.SaveChangesAsync();
 
+            if (!context.Roles.Any())
+            {
+                var Roles = new List<IdentityRole<Guid>>
+                        {
+                            new IdentityRole<Guid> {Id=Guid.NewGuid(),Name ="Admin" , NormalizedName = "Admin" },
+                            new IdentityRole<Guid> {Id=Guid.NewGuid() ,Name ="User" , NormalizedName = "User" }
+                        };
+                context.Roles.AddRange(Roles);  
+
+            }
+
+            await context.SaveChangesAsync();
 
         }
     }

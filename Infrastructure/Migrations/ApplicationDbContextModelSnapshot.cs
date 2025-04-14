@@ -36,8 +36,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("ArrivalTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("AvailableSeats")
                         .HasColumnType("int");
@@ -49,10 +49,14 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("DepartureTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("DepartureTime")
+                        .HasColumnType("datetime2");
 
-                    b.Property<decimal>("PricePerSeat")
+                    b.Property<string>("FlightNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -225,21 +229,7 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("e82ff72e-395d-4a7a-9178-dc570c2cb5a1"),
-                            Name = "Admin",
-                            NormalizedName = "Admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("2e1e0b53-601b-4398-8e33-0c3078718c4a"),
-                            Name = "User",
-                            NormalizedName = "User"
-                        });
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

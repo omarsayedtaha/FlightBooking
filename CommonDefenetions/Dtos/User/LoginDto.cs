@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonDefenitions.Dtos
+namespace CommonDefenitions.Dtos.User
 {
     public class LoginDto
     {
