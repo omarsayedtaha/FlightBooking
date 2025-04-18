@@ -26,7 +26,7 @@ namespace CommonDefenitions.Helper
                         ArrivalLocation = "London, LHR",
                         DepartureTime = DateTime.Now,
                         ArrivalTime = DateTime.Now.AddHours(2),
-                        AvailableSeats = 120,
+                        NumberOfSeats = 120,
                         Price = 349m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
@@ -39,7 +39,7 @@ namespace CommonDefenitions.Helper
                         ArrivalLocation = "London, LHR",
                         DepartureTime = DateTime.Now,
                         ArrivalTime = DateTime.Now.AddHours(3),
-                        AvailableSeats = 95,
+                        NumberOfSeats = 95,
                         Price = 429m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
@@ -52,7 +52,7 @@ namespace CommonDefenitions.Helper
                         ArrivalLocation = "London, LHR",
                         DepartureTime = DateTime.Now.AddDays(1),
                         ArrivalTime = DateTime.Now.AddDays(1).AddHours(5),
-                        AvailableSeats = 150,
+                        NumberOfSeats = 150,
                         Price = 289m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow

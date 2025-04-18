@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250414151710_InitialCreate")]
+    [Migration("20250417000548_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -42,9 +42,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("ArrivalTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("AvailableSeats")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -58,6 +55,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("FlightNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -87,6 +87,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("FlightId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("NumberOfBookedSeats")
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()

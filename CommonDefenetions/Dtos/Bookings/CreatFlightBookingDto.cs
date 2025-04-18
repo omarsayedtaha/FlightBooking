@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CommonDefenitions.Dtos.Bookings
 {
-    public class BookingCreateDto
+    public class CreatFlightBookingDto
     {
 
     }

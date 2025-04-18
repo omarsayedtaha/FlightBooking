@@ -13,19 +13,34 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Booking.Helper
 {
-    public class Services
+    public static class Services
     {
-        public static void AddServices(IServiceCollection services, IConfiguration config)
+        public static void AddServices(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddIdentity<User, IdentityRole<Guid>>()
-           .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<User, IdentityRole<Guid>>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireDigit = true;
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            })
+           .AddEntityFrameworkStores<ApplicationDbContext>()
+           .AddDefaultTokenProviders();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            })
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -52,6 +67,7 @@ namespace Booking.Helper
 
 
             services.AddScoped<BaseRequest>();
+            services.AddScoped<AppHelperSerivices>();
         }
     }
 }

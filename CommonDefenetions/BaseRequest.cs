@@ -7,16 +7,22 @@ using System.Threading.Tasks;
 
 namespace CommonDefenitions
 {
+    public class BaseRequest<T>
+    {
+        public string? Search { get; set; }
+        public string? Orderby { get; set; }
+
+        public bool? IsAscending { get; set; }
+
+        public T? Filter { get; set; }
+    }
+
     public class BaseRequest
     {
-        public Guid UserId { get; set; }
-        public string Role { get; set; }
-        public int PageIndex { get; set; }
-        public int PageSize { get; set; }
-        public string Search { get; set; }
-        public string Orderby { get; set; }
+        public string? Search { get; set; }
+        public string? Orderby { get; set; }
+
         public bool IsAscending { get; set; }
 
     }
-
 }

@@ -4,14 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Azure.Core;
 using CommonDefenitions;
 using CommonDefenitions.Dtos.Flight;
+using Domain;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Features.Flight.Queries
 {
-    public class GetFlightsWithFilter
+    public class GetFlightsWithFilter:BaseServices<Domain.Flight , FlightRequest>
     {
         private readonly ApplicationDbContext _context;
 
@@ -20,7 +23,7 @@ namespace Application.Features.Flight.Queries
             _context = context;
         }
 
-        public async Task<BaseResponse<IEnumerable<FlightDto>>> Get(BaseRequest request, FlightFilterDto filter)
+        public async Task<BaseResponse<IEnumerable<FlightDto>>> Get(BaseRequest<FlightRequest> request)
         {
             BaseResponse<IEnumerable<FlightDto>> response = new BaseResponse<IEnumerable<FlightDto>>();
             response.StatusCode = HttpStatusCode.OK;
@@ -28,54 +31,79 @@ namespace Application.Features.Flight.Queries
             response.Data = null;
 
             var query = _context.Flights.AsQueryable();
-            if (filter.Id.HasValue)
-            {
 
-                query = _context.Flights.Where(f => f.Id == filter.Id.Value );
+            if (request.Filter != null)
+                query = ApplyFilter(query, request);
 
-            }
-            if (filter.Date.HasValue)
-            {
-
-                query = _context.Flights.Where(f => f.DepartureTime.Date == filter.Date.Value.ToDateTime(TimeOnly.MinValue));
-
-            }
+            if (!string.IsNullOrEmpty(request.Search))
+                query = ApplySearch(query, request.Search);
 
             if (!string.IsNullOrEmpty(request.Orderby))
             {
-                query = request.IsAscending ?
+                query = request.IsAscending.Value ?
                     query.OrderBy(f => request.Orderby)
                     : query.OrderByDescending(f => request.Orderby);
             }
+            
+            var flights = query.ToList();
 
-            if (!query.Any())
+            if (!flights.Any())
             {
-                response.Message=HttpStatusCode.NotFound.ToString();
+                response.Message = HttpStatusCode.NotFound.ToString();
                 response.Message = "No Flights Available";
             }
-            var flights = query.ToList();
-            var flightsdto = new List<FlightDto>();
 
-            foreach (var flight in flights)
+            response.Data = flights.Select(f => new FlightDto()
             {
-                flightsdto.Add(new FlightDto
-                {
-                    Id = flight.Id,
-                    FlightNumber = flight.FlightNumber,
-                    Airline = flight.Airline,
-                    DepartureCity = flight.DepartureLocation,
-                    DepartureTime = flight.DepartureTime.ToString("t"),
-                    ArrivalLocation = flight.ArrivalLocation,
-                    ArrivalTime = flight.ArrivalTime.ToString("t"),
-                    Duration = flight.CalculateDuration(flight.DepartureTime, flight.ArrivalTime),
-                    Price = flight.Price,
-                });
-            }
+                Id = f.Id,
+                Airline = f.Airline,
+                DepartureLocation = f.DepartureLocation,
+                DepartureDate = f.DepartureTime.ToString("d"),
+                DepartureTime = f.DepartureTime.ToString("t"),
+                ArrivalLocation = f.ArrivalLocation,
+                ArrivalDate = f.ArrivalTime.ToString("d"),
+                ArrivalTime = f.ArrivalTime.ToString("t"),
+                Duration = f.CalculateDuration(f.DepartureTime, f.ArrivalTime),
+                FlightNumber = f.FlightNumber,
+                Price = f.Price
+            }).ToList();
 
-            response.Data = flightsdto;
             return response;
         }
 
+        public override IQueryable<Domain.Flight> ApplyFilter(IQueryable<Domain.Flight> query, BaseRequest<FlightRequest> request)
+        {
+            if (request.Filter.Id.HasValue)
+            {
+                query = query.Where(f => f.Id == request.Filter.Id.Value);
 
+            }
+            if (request.Filter.Date > DateTime.MinValue)
+            {
+
+                query = query.Where(f => f.DepartureTime.Date == request.Filter.Date.Date/*.ToDateTime(TimeOnly.MinValue)*/);
+
+            }
+            if (!string.IsNullOrEmpty(request.Filter.from))
+            {
+                query = query.Where(f => f.DepartureLocation.ToLower().Contains(request.Filter.from.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(request.Filter.to))
+            {
+                query = query.Where(f => f.ArrivalLocation.ToLower().Contains(request.Filter.to.ToLower()));
+            }
+             return query;
+        }
+
+        public override IQueryable<Domain.Flight> ApplySearch(IQueryable<Domain.Flight> query, string search)
+        {
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(f => f.Airline == search);
+            }
+            return query;
+        }
     }
 }

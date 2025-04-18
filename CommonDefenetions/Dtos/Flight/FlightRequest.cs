@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace CommonDefenitions.Dtos.Flight
 {
-    public class FlightFilterDto
+    public class FlightRequest
     {
         public Guid? Id { get; set; }
 
-        public DateOnly? Date { get; set; }
+        public DateTime Date { get; set; }
+        public string from { get; set; }
+
+        public string to { get; set; }
+
+
     }
 }

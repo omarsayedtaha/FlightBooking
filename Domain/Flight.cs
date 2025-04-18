@@ -12,13 +12,15 @@ namespace Domain
         public string ArrivalLocation { get; set; }
         public DateTime DepartureTime { get; set; }
         public DateTime ArrivalTime { get; set; }
-        public int AvailableSeats { get; set; }
+        public int NumberOfSeats { get; set; }
         public decimal Price { get; set; }
 
         [NotMapped]
         public TimeOnly Duration { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public List<FlightBookings> FlightBookings { get; set; }
 
         public string CalculateDuration(DateTime departure, DateTime arrival)
         {
