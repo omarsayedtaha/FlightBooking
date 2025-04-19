@@ -27,7 +27,7 @@ namespace Application.Features.Flight.Queries
         {
             BaseResponse<IEnumerable<FlightDto>> response = new BaseResponse<IEnumerable<FlightDto>>();
             response.StatusCode = HttpStatusCode.OK;
-            response.Message = null;
+            response.Message = string.Empty;
             response.Data = null;
 
             var query = _context.Flights.AsQueryable();

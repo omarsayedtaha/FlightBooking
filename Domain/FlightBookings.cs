@@ -17,9 +17,10 @@ namespace Domain
         public DateTime TravelDate { get; set; }
         public string Status { get; set; }
         public decimal TotalCost { get; set; }
-        public DateTime? CancellationDate { get; set; }
+        public bool IsCanceled { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public DateTime? CancellationDate { get; set; }
         public User User { get; set; }
         public Flight Flight { get; set; }
     }

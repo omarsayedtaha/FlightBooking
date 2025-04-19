@@ -14,9 +14,6 @@ namespace Domain
         public DateTime ArrivalTime { get; set; }
         public int NumberOfSeats { get; set; }
         public decimal Price { get; set; }
-
-        [NotMapped]
-        public TimeOnly Duration { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 

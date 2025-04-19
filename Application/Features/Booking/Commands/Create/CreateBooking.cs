@@ -10,14 +10,14 @@ using CommonDefenitions.Dtos.Bookings;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Booking.Commands
+namespace Application.Features.Booking.Commands.Create
 {
     public class CreateBooking
     {
         private readonly ApplicationDbContext _context;
         private readonly AppHelperSerivices _appHelper;
 
-        public CreateBooking(ApplicationDbContext context , AppHelperSerivices appHelper)
+        public CreateBooking(ApplicationDbContext context, AppHelperSerivices appHelper)
         {
             _context = context;
             _appHelper = appHelper;
@@ -30,7 +30,7 @@ namespace Application.Features.Booking.Commands
             response.Message = string.Empty;
             response.Data = Guid.Empty;
 
-            if (flightId==Guid.Empty)
+            if (flightId == Guid.Empty)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = "FlightId is required";
@@ -38,9 +38,9 @@ namespace Application.Features.Booking.Commands
             }
             var flight = new Domain.Flight();
             if (_context.Bookings.Any())
-                 flight =await _context.Flights.Where(f => f.Id == flightId).Include(b => b.FlightBookings).FirstOrDefaultAsync();
-            else 
-               flight =await _context.Flights.Where(f => f.Id == flightId).FirstOrDefaultAsync();
+                flight = await _context.Flights.Where(f => f.Id == flightId).Include(b => b.FlightBookings).FirstOrDefaultAsync();
+            else
+                flight = await _context.Flights.Where(f => f.Id == flightId).FirstOrDefaultAsync();
 
             if (flight == null)
             {
@@ -64,7 +64,7 @@ namespace Application.Features.Booking.Commands
 
             _context.Bookings.Add(booking);
 
-           await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
 
             response.Data = booking.Id;
             response.Message = $"Booking {booking.Status}";

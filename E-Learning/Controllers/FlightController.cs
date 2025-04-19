@@ -1,4 +1,6 @@
-﻿using Application.Features.Flight.Queries;
+﻿using Application.Features.Flight.Commands.Create;
+using Application.Features.Flight.Commands.Update;
+using Application.Features.Flight.Queries;
 using CommonDefenitions;
 using CommonDefenitions.Dtos.Flight;
 using Domain;
@@ -22,8 +24,27 @@ namespace Booking.Controllers
             _request = request;
         }
 
+        [HttpPost("create-flight")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody]CreateFlightDto model)
+        {
+            var CreateFlightService = new CreateFlight(_context);
+          var result = await CreateFlightService.Create(model);
 
-        [HttpGet("getAllflights")]
+            return Ok(result);
+        }
+
+        [HttpPut("update-flight")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update([FromQuery]Guid Id,[FromBody]CreateFlightDto model)
+        {
+            var UpdateFlightService = new UpdateFlight(_context);
+            var result = await UpdateFlightService.Update(Id,model);
+
+            return Ok(result);
+        }
+
+        [HttpGet("get-All-flights")]
         public async Task<IActionResult> GetAll()
         {
             var Service = new GetAllFlights(_context , _request);
@@ -31,7 +52,7 @@ namespace Booking.Controllers
             return Ok(flights);
         }
 
-        [HttpGet("getflightswithfilter")]
+        [HttpGet("get-flights-with-filter")]
         public async Task<IActionResult> GetWithFilter([FromQuery]BaseRequest<FlightRequest> flightFilter)
         {
             var Service = new GetFlightsWithFilter(_context);
