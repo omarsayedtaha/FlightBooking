@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking(Api)", "E-Learning\Booking(Api).csproj", "{A121BF26-392E-426B-9678-187A0E109937}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking(Api)", "Booking\Booking(Api).csproj", "{A121BF26-392E-426B-9678-187A0E109937}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{4E16F279-6E0B-461C-8556-352CF0D890D6}"
 EndProject
