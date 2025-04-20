@@ -15,3 +15,4 @@
 - **SQL Server**: Database to store application data.
 - **Fluent Validation**: Library for robust data validation.
 - **ASP.NET Identity**: Authentication and authorization framework.
+- **Clean Architecture**: Ensures separation of concerns and maintainability by organizing code into layers such as Application, Domain, Infrastructure, and Presentation.
