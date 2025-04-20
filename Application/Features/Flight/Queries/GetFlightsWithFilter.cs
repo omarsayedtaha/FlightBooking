@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Features.Flight.Queries
 {
-    public class GetFlightsWithFilter:BaseServices<Domain.Flight , FlightRequest>
+    public class GetFlightsWithFilter : BaseServices<Domain.Flight, FlightRequest>
     {
         private readonly ApplicationDbContext _context;
 
@@ -40,16 +40,19 @@ namespace Application.Features.Flight.Queries
 
             if (!string.IsNullOrEmpty(request.Orderby))
             {
-                query = request.IsAscending.Value ?
-                    query.OrderBy(f => request.Orderby)
-                    : query.OrderByDescending(f => request.Orderby);
+                if (request.Orderby.ToLower() == "Price".ToLower())
+                {
+                    query = request.IsAscending.Value ?
+                    query.OrderBy(f => f.Price)
+                  : query.OrderByDescending(f => f.Price);
+                }
             }
-            
-            var flights = query.ToList();
+
+            var flights = query.Where(f=>f.NumberOfSeatsAvialable<f.NumberOfSeats).ToList();
 
             if (!flights.Any())
             {
-                response.Message = HttpStatusCode.NotFound.ToString();
+                response.StatusCode = HttpStatusCode.NotFound;
                 response.Message = "No Flights Available";
             }
 
@@ -93,7 +96,7 @@ namespace Application.Features.Flight.Queries
             {
                 query = query.Where(f => f.ArrivalLocation.ToLower().Contains(request.Filter.to.ToLower()));
             }
-             return query;
+            return query;
         }
 
         public override IQueryable<Domain.Flight> ApplySearch(IQueryable<Domain.Flight> query, string search)

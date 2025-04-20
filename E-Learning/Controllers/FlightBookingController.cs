@@ -1,6 +1,8 @@
 ﻿using Application.Features.Booking.Commands;
 using Application.Features.Booking.Commands.Create;
 using Application.Features.Booking.Commands.Delete;
+using Application.Features.Booking.Commands.Update;
+using Application.Features.Booking.Queries;
 using Booking.Helper;
 using CommonDefenitions;
 using Infrastructure;
@@ -17,11 +19,14 @@ namespace Booking.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly AppHelperSerivices appHelper;
+        private readonly UpdateBooking updateBooking;
 
-        public FlightBookingController(ApplicationDbContext context,AppHelperSerivices appHelper)
+        public FlightBookingController(ApplicationDbContext context,
+            AppHelperSerivices appHelper)
         {
             this.context = context;
             this.appHelper = appHelper;
+            this.updateBooking = updateBooking;
         }
 
         [HttpPost("create-booking")]
@@ -36,9 +41,19 @@ namespace Booking.Controllers
         [HttpPost("confirm-booking")]
         public async Task<IActionResult> ConfirmBooking([FromBody] Guid bookingId)
         {
-            var booking = context.Bookings.FirstOrDefault(b=>b.Id==bookingId);
-            booking.Status = BookingStatus.Succeded.ToString();
-            return Ok("Booking confirmed");
+            var bookingservice = new UpdateBooking(context);
+            var result =await bookingservice.ConfirmBooking(bookingId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("get-user-booking-details")]
+        public async Task<IActionResult> GetUserBookings([FromQuery]Guid UserId)
+        {
+            var bookingservice = new GetUserBookings(context);
+            var result = await bookingservice.GetAll(UserId);
+
+            return Ok(result);
         }
 
         [HttpPost("cancel-booking")]

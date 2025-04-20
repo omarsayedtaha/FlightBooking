@@ -13,6 +13,7 @@ namespace Domain
         public DateTime DepartureTime { get; set; }
         public DateTime ArrivalTime { get; set; }
         public int NumberOfSeats { get; set; }
+        public int NumberOfSeatsAvialable { get; set; } 
         public decimal Price { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

@@ -44,14 +44,6 @@ namespace Booking.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-All-flights")]
-        public async Task<IActionResult> GetAll()
-        {
-            var Service = new GetAllFlights(_context , _request);
-            var flights = Service.GetAll();
-            return Ok(flights);
-        }
-
         [HttpGet("get-flights-with-filter")]
         public async Task<IActionResult> GetWithFilter([FromQuery]BaseRequest<FlightRequest> flightFilter)
         {

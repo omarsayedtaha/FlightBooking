@@ -40,7 +40,7 @@ namespace Application.Features.Booking.Commands.Create
             if (_context.Bookings.Any())
                 flight = await _context.Flights.Where(f => f.Id == flightId).Include(b => b.FlightBookings).FirstOrDefaultAsync();
             else
-                flight = await _context.Flights.Where(f => f.Id == flightId).FirstOrDefaultAsync();
+                flight = await _context.Flights.FirstOrDefaultAsync(f=>f.Id==flightId);
 
             if (flight == null)
             {

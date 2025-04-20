@@ -27,6 +27,7 @@ namespace CommonDefenitions.Helper
                         DepartureTime = DateTime.Now,
                         ArrivalTime = DateTime.Now.AddHours(2),
                         NumberOfSeats = 120,
+                        NumberOfSeatsAvialable = 120,
                         Price = 349m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
@@ -40,6 +41,7 @@ namespace CommonDefenitions.Helper
                         DepartureTime = DateTime.Now,
                         ArrivalTime = DateTime.Now.AddHours(3),
                         NumberOfSeats = 95,
+                        NumberOfSeatsAvialable=95,
                         Price = 429m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
@@ -53,6 +55,7 @@ namespace CommonDefenitions.Helper
                         DepartureTime = DateTime.Now.AddDays(1),
                         ArrivalTime = DateTime.Now.AddDays(1).AddHours(5),
                         NumberOfSeats = 150,
+                        NumberOfSeatsAvialable = 150,
                         Price = 289m,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow

@@ -12,7 +12,7 @@ namespace CommonDefenitions
         public string? Search { get; set; }
         public string? Orderby { get; set; }
 
-        public bool? IsAscending { get; set; }
+        public bool? IsAscending { get; set; }=true;
 
         public T? Filter { get; set; }
     }
