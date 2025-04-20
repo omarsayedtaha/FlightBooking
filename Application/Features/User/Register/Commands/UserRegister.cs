@@ -9,6 +9,7 @@ using CommonDefenitions;
 using CommonDefenitions.Dtos.User;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.User.Register.Commands
 {
@@ -31,20 +32,21 @@ namespace Application.Features.User.Register.Commands
             response.Message = null;
             response.Data = Guid.Empty;
 
-            var validator = new UserRegisterValidator();
+            var validator = new UserRegisterValidator(registerDto.Email,userManager);
             var result = validator.Validate(registerDto);
             if (!result.IsValid)
             {
                 response.Message = string.Join(",", result.Errors.Select(x => x.ErrorMessage));
                 return response;
             }
-            var user = userManager.Users.FirstOrDefault(x => x.Email == registerDto.Email);
+            var user =await userManager.Users.FirstOrDefaultAsync(x => x.Email == registerDto.Email);
             if (user != null)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = "This user is already registered";
                 return response;
             }
+
 
             var User = new Domain.User
             {
@@ -59,26 +61,25 @@ namespace Application.Features.User.Register.Commands
                 PhoneNumber = registerDto.PhoneNumber,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
+            bool IsFirstUser = !userManager.Users.Any();
             var check = await userManager.CreateAsync(User, registerDto.Password);
-
-            if (registerDto.IsAdmin)
+            if (IsFirstUser)
             {
-                await userManager.AddToRoleAsync(User, "Admin");
+                await userManager.AddToRoleAsync(User, "SuperAdmin");
             }
             else
             {
                 await userManager.AddToRoleAsync(User, "User");
-            }
 
-            if (check.Succeeded)
+            }
+            if (!check.Succeeded)
             {
-                response.StatusCode = HttpStatusCode.OK;
-                response.Message = "Registration Successfull";
-                response.Data = User.Id;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Message = $"Registration failed : {string.Join(",", check.Errors.Select(x => x.Description))}";
                 return response;
             }
 
-            response.Message = string.Join(",", check.Errors.Select(x => x.Description));
+            response.Message = "Registration Successfull";
             return response;
         }
     }

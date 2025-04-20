@@ -10,6 +10,6 @@
         public string Nationality { get; set; }
         public string PhoneNumber { get; set; }
         public string PassportNumber { get; set; }
-        public bool IsAdmin { get; set; }
+        public bool IsFirstUser { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace CommonDefenitions.Helper
 {
     public static class DataSeeding
     {
+    
         public static async void SeedData(ApplicationDbContext context)
         {
             if (!context.Flights.Any())
@@ -68,12 +69,13 @@ namespace CommonDefenitions.Helper
 
             if (!context.Roles.Any())
             {
-                var Roles = new List<IdentityRole<Guid>>
-                        {
-                            new IdentityRole<Guid> {Id=Guid.NewGuid(),Name ="Admin" , NormalizedName = "Admin" },
-                            new IdentityRole<Guid> {Id=Guid.NewGuid() ,Name ="User" , NormalizedName = "User" }
-                        };
-                context.Roles.AddRange(Roles);  
+                var Role = new IdentityRole<Guid>
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "SuperAdmin",
+                    NormalizedName = "SuperAdmin"
+                };
+                context.Roles.Add(Role);
 
             }
 

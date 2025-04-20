@@ -85,7 +85,7 @@ namespace Bookings
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-                    c.RoutePrefix = string.Empty; // Makes Swagger the default route
+                    c.RoutePrefix = string.Empty; 
                 });
             }
             

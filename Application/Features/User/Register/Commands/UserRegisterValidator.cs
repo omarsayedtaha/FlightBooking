@@ -5,19 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using CommonDefenitions.Dtos.User;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Features.User.Register.Commands
 {
     public class UserRegisterValidator : AbstractValidator<RegisterDto>
     {
-        public UserRegisterValidator()
+        private readonly string email;
+        private readonly UserManager<Domain.User> _userManager;
+
+        public UserRegisterValidator(string email,UserManager<Domain.User>userManager )
         {
+            this.email = email;
+            _userManager = userManager;
+
             RuleFor(x => x.Email)
             .NotNull()
             .NotEmpty()
             .WithMessage("Email is required")
             .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-            .WithMessage("Invalid email format.");
+            .WithMessage("Invalid email format.")
+            .Must(IsEmailTaken).WithMessage("Email is already taken.");
+
 
             RuleFor(x => x.Password)
                 .NotNull()
@@ -61,9 +70,17 @@ namespace Application.Features.User.Register.Commands
                 .NotNull()
                 .NotEmpty()
                 .MinimumLength(11)
-                .WithMessage("Passport number must have 11 numbers");
+                .WithMessage("Phone number number must have 11 numbers");
+        }
 
-
+        private bool IsEmailTaken(string email)
+        {
+            var user =  _userManager.FindByEmailAsync(email);
+            if (user!=null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
