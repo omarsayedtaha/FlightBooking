@@ -36,10 +36,10 @@ namespace Booking.Controllers
 
         [HttpPut("update-flight")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update([FromQuery]Guid Id,[FromBody]CreateFlightDto model)
+        public async Task<IActionResult> Update([FromBody]UpdateFlightDto model)
         {
             var UpdateFlightService = new UpdateFlight(_context);
-            var result = await UpdateFlightService.Update(Id,model);
+            var result = await UpdateFlightService.Update(model);
 
             return Ok(result);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -25,6 +26,15 @@ namespace Application.Features.Flight.Commands.Create
             response.StatusCode = HttpStatusCode.OK;
             response.Message = string.Empty;
             response.Data = Guid.Empty;
+
+            var Validator = new CreateFlightValidator();
+            var result = Validator.Validate(model);
+
+            if (!result.IsValid)
+            {
+                response.Message = string.Join(",", result.Errors.Select(x => x.ErrorMessage));
+                return response;
+            }
 
             var IsFlightExist = _context.Flights
                 .Any(f => f.FlightNumber == model.FlightNumber &&

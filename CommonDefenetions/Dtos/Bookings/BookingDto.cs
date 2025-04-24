@@ -18,6 +18,5 @@ namespace CommonDefenitions.Dtos.Bookings
         public decimal TotalCost { get; set; }
         public DateTime? CancellationDate { get; set; }
 
-
     }
 }

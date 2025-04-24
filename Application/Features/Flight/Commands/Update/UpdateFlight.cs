@@ -8,6 +8,7 @@ using CommonDefenitions.Dtos.Flight;
 using CommonDefenitions;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Application.Features.Flight.Commands.Create;
 
 namespace Application.Features.Flight.Commands.Update
 {
@@ -19,14 +20,23 @@ namespace Application.Features.Flight.Commands.Update
         {
             _context = contex;
         }
-        public async Task<BaseResponse<Guid>> Update(Guid flightId , CreateFlightDto model)
+        public async Task<BaseResponse<Guid>> Update(UpdateFlightDto model)
         {
             var response = new BaseResponse<Guid>();
             response.StatusCode = HttpStatusCode.OK;
             response.Message = string.Empty;
             response.Data = Guid.Empty;
 
-            var flight =await _context.Flights.FirstOrDefaultAsync(f => f.Id == flightId);
+            var flight =await _context.Flights.FirstOrDefaultAsync(f => f.Id == model.FlightId);
+
+            var Validator = new UpdateFlightValidator();
+            var result = Validator.Validate(model);
+
+            if (!result.IsValid)
+            {
+                response.Message = string.Join(",", result.Errors.Select(x => x.ErrorMessage));
+                return response;
+            }
 
             if (flight == null)
             {
