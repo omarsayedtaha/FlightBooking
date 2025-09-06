@@ -5,15 +5,10 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonDefenitions
+namespace Application.Common
 {
-    public class BaseRequest<T>
+    public class BaseRequest<T> : BaseRequest
     {
-        public string? Search { get; set; }
-        public string? Orderby { get; set; }
-
-        public bool? IsAscending { get; set; }=true;
-
         public T? Filter { get; set; }
     }
 
@@ -22,7 +17,11 @@ namespace CommonDefenitions
         public string? Search { get; set; }
         public string? Orderby { get; set; }
 
-        public bool IsAscending { get; set; }
+        public bool? IsAscending { get; set; }
+
+        public int? PageIndex { get; set; } = 1;
+
+        public int? PageSize { get; set; } = 10;
 
     }
 }

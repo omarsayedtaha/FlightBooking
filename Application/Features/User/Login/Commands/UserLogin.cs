@@ -7,10 +7,12 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common;
+using Application.Dtos.User;
 using Application.Features.User.Register;
-using CommonDefenitions;
-using CommonDefenitions.Dtos.User;
-using Infrastructure;
+using Domain;
+using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +24,7 @@ namespace Application.Features.User.Login.Commands
         private readonly UserManager<Domain.User> userManager;
         private readonly SignInManager<Domain.User> signInManager;
         private readonly IConfiguration configuration;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         public UserLogin(UserManager<Domain.User> userManager
             , SignInManager<Domain.User> signInManager,
@@ -35,7 +38,6 @@ namespace Application.Features.User.Login.Commands
         public async Task<BaseResponse<UserDto>> Login(LoginDto loginmodel)
         {
             var response = new BaseResponse<UserDto>();
-            response.StatusCode = HttpStatusCode.OK;
             response.Message = null;
             response.Data = null;
 
@@ -50,7 +52,7 @@ namespace Application.Features.User.Login.Commands
             if (user == null)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
-                response.Message = "Email not found";
+                response.Message = "Login failed";
                 return response;
             }
             var userResult = await signInManager.PasswordSignInAsync(user, loginmodel.Password, false, false);
@@ -61,10 +63,11 @@ namespace Application.Features.User.Login.Commands
             }
             //Update user table to add token 
             user.Token = await GenerateToken(user);
-            user.RefreshToken = Guid.NewGuid();
-            user.RefreshTokenExpiryDate = DateTime.Now.AddMonths(2);
+            // user.RefreshToken = Guid.NewGuid();
+            // user.RefreshTokenExpiryDate = DateTime.Now.AddMonths(2);
             await userManager.UpdateAsync(user);
 
+            response.StatusCode = HttpStatusCode.OK;
             response.Message = "Welcome";
             response.Data = new UserDto
             {
@@ -75,7 +78,7 @@ namespace Application.Features.User.Login.Commands
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 Token = user.Token,
-                RefreshToken = user.RefreshToken,
+                // RefreshToken = user.RefreshToken,
 
             };
             return response;
@@ -88,7 +91,6 @@ namespace Application.Features.User.Login.Commands
                 new Claim(ClaimTypes.Sid,user.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier,user.UserName),
                 new Claim(ClaimTypes.Name,$"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Email,$"{user.FirstName} {user.LastName}"),
             };
             var Roles = await userManager.GetRolesAsync(user);
             foreach (var role in Roles)

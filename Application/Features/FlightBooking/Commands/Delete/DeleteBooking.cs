@@ -4,16 +4,16 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using CommonDefenitions;
-using Infrastructure;
+using Application.Common;
+using Application.Interfaces;
 
 namespace Application.Features.Booking.Commands.Delete
 {
     public class DeleteBooking
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public DeleteBooking(ApplicationDbContext context)
+        public DeleteBooking(IApplicationDbContext context)
         {
             _context = context;
         }
@@ -41,8 +41,8 @@ namespace Application.Features.Booking.Commands.Delete
                 return response;
             }
 
-            booking.IsCanceled = true;  
-            booking.CancellationDate = DateTime.Now;    
+            booking.IsCanceled = true;
+            booking.CancellationDate = DateTime.Now;
 
             _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();

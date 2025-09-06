@@ -4,18 +4,19 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using CommonDefenitions;
+using Application.Common;
+using Application.Interfaces;
 using Domain;
-using Infrastructure;
+using Domian.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Features.Booking.Commands.Update
 {
     public class UpdateBooking
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public UpdateBooking(ApplicationDbContext context)
+        public UpdateBooking(IApplicationDbContext context)
         {
             _context = context;
         }

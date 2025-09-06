@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonDefenitions.Dtos.Flight
+namespace Application.Dtos.Flight
 {
     public class FlightDto
     {

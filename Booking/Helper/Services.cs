@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common;
+using Application.Interfaces;
 using CommonDefenitions;
 using Domain;
 using Infrastructure;
+using MailKit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using IMailService = Application.Interfaces.IMailService;
+using IApplicationDbContext = Application.Interfaces.IApplicationDbContext;
+
 
 namespace Booking.Helper
 {
@@ -17,7 +23,7 @@ namespace Booking.Helper
     {
         public static void AddServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
@@ -65,7 +71,8 @@ namespace Booking.Helper
                 });
             });
 
-
+            services.Configure<MailSettings>(config.GetSection(MailSettings.MailOptionsKey));
+            services.AddScoped<IMailService, EmailService>();
             services.AddScoped<BaseRequest>();
             services.AddScoped<AppHelperSerivices>();
         }

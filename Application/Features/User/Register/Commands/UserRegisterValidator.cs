@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CommonDefenitions.Dtos.User;
+using Application.Dtos.User;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,7 +14,7 @@ namespace Application.Features.User.Register.Commands
         private readonly string email;
         private readonly UserManager<Domain.User> _userManager;
 
-        public UserRegisterValidator(string email,UserManager<Domain.User>userManager )
+        public UserRegisterValidator(string email, UserManager<Domain.User> userManager)
         {
             this.email = email;
             _userManager = userManager;
@@ -75,8 +75,8 @@ namespace Application.Features.User.Register.Commands
 
         private bool IsEmailTaken(string email)
         {
-            var user =  _userManager.FindByEmailAsync(email);
-            if (user!=null)
+            var user = _userManager.FindByEmailAsync(email);
+            if (user != null)
             {
                 return true;
             }

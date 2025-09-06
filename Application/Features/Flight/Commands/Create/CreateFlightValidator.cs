@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CommonDefenitions.Dtos.Flight;
+using Application.Dtos.Flight;
 using FluentValidation;
 
 namespace Application.Features.Flight.Commands.Create
 {
-    public class CreateFlightValidator:AbstractValidator<CreateFlightDto>
+    public class CreateFlightValidator : AbstractValidator<CreateFlightDto>
     {
         public CreateFlightValidator()
         {

@@ -1,5 +1,6 @@
 
 using System;
+using System.Drawing;
 using System.Text;
 using Booking.Helper;
 using CommonDefenitions.Helper;
@@ -71,28 +72,28 @@ namespace Bookings
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.ToString());    
+                logger.LogError(ex.ToString());
             }
 
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            } 
-            else
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-                    c.RoutePrefix = string.Empty; 
-                });
             }
-            
+            // else
+            // {
+            //     app.UseSwagger();
+            //     app.UseSwaggerUI(c =>
+            //     {
+            //         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            //         c.RoutePrefix = string.Empty;
+            //     });
+            // }
+
 
             app.UseHttpsRedirection();
 
-            app.UseCors("AllowAll");
+            // app.UseCors("AllowAll");
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonDefenitions.Dtos.Flight
+namespace Application.Dtos.Flight
 {
-    public class CreateFlightDto
+    public class UpdateFlightDto
     {
+        public Guid FlightId { get; set; }
         public string FlightNumber { get; set; }
         public string Airline { get; set; }
         public string DepartureLocation { get; set; }
