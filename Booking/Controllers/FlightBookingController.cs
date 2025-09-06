@@ -1,10 +1,11 @@
-﻿using Application.Features.Booking.Commands;
+﻿using Application.Common;
+using Application.Features.Booking.Commands;
 using Application.Features.Booking.Commands.Create;
 using Application.Features.Booking.Commands.Delete;
 using Application.Features.Booking.Commands.Update;
 using Application.Features.Booking.Queries;
+using Application.Interfaces;
 using Booking.Helper;
-using CommonDefenitions;
 using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,11 +18,11 @@ namespace Booking.Controllers
     [Authorize]
     public class FlightBookingController : ControllerBase
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
         private readonly AppHelperSerivices appHelper;
         private readonly UpdateBooking updateBooking;
 
-        public FlightBookingController(ApplicationDbContext context,
+        public FlightBookingController(IApplicationDbContext context,
             AppHelperSerivices appHelper)
         {
             this.context = context;
@@ -33,22 +34,22 @@ namespace Booking.Controllers
         public async Task<IActionResult> CreateBooking([FromQuery] Guid flightId)
         {
             var bookingservice = new CreateBooking(context, appHelper);
-            var result =await bookingservice.Create(flightId);
+            var result = await bookingservice.Create(flightId);
 
-            return Ok(result);  
+            return Ok(result);
         }
 
         [HttpPost("confirm-booking")]
         public async Task<IActionResult> ConfirmBooking([FromBody] Guid bookingId)
         {
             var bookingservice = new UpdateBooking(context);
-            var result =await bookingservice.ConfirmBooking(bookingId);
+            var result = await bookingservice.ConfirmBooking(bookingId);
 
             return Ok(result);
         }
 
         [HttpPost("get-user-booking-details")]
-        public async Task<IActionResult> GetUserBookings([FromQuery]Guid UserId)
+        public async Task<IActionResult> GetUserBookings([FromQuery] Guid UserId)
         {
             var bookingservice = new GetUserBookings(context);
             var result = await bookingservice.GetAll(UserId);

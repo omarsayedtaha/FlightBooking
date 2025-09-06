@@ -4,21 +4,20 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common;
 using Application.Features.Flight.Commands.Update;
-using Booking.Helper;
-using CommonDefenitions;
-using CommonDefenitions.Dtos.Bookings;
-using Infrastructure;
+using Application.Interfaces;
+using Domian.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Booking.Commands.Create
 {
     public class CreateBooking
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly AppHelperSerivices _appHelper;
 
-        public CreateBooking(ApplicationDbContext context, AppHelperSerivices appHelper)
+        public CreateBooking(IApplicationDbContext context, AppHelperSerivices appHelper)
         {
             _context = context;
             _appHelper = appHelper;
@@ -41,7 +40,7 @@ namespace Application.Features.Booking.Commands.Create
             if (_context.Bookings.Any())
                 flight = await _context.Flights.Where(f => f.Id == flightId).Include(b => b.FlightBookings).FirstOrDefaultAsync();
             else
-                flight = await _context.Flights.FirstOrDefaultAsync(f=>f.Id==flightId);
+                flight = await _context.Flights.FirstOrDefaultAsync(f => f.Id == flightId);
 
             if (flight == null)
             {

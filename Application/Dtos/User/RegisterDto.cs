@@ -1,4 +1,4 @@
-﻿namespace CommonDefenitions.Dtos.User
+﻿namespace Application.Dtos.User
 {
     public class RegisterDto
     {

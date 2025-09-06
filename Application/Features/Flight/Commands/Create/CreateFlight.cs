@@ -5,25 +5,25 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using CommonDefenitions;
-using CommonDefenitions.Dtos.Flight;
-using Infrastructure;
+using Application.Common;
+using Application.Dtos.Flight;
+using Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Flight.Commands.Create
 {
     public class CreateFlight
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public CreateFlight(ApplicationDbContext context)
+        public CreateFlight(IApplicationDbContext context)
         {
-            _context = context;
+            this._context = context;
         }
 
         public async Task<BaseResponse<Guid>> Create(CreateFlightDto model)
         {
             var response = new BaseResponse<Guid>();
-            response.StatusCode = HttpStatusCode.OK;
             response.Message = string.Empty;
             response.Data = Guid.Empty;
 
@@ -32,6 +32,7 @@ namespace Application.Features.Flight.Commands.Create
 
             if (!result.IsValid)
             {
+                response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = string.Join(",", result.Errors.Select(x => x.ErrorMessage));
                 return response;
             }
@@ -46,6 +47,12 @@ namespace Application.Features.Flight.Commands.Create
                  f.Price == model.Price &&
                  f.CreatedAt == DateTime.Now);
 
+            if (IsFlightExist)
+            {
+                response.Message = "This flight is already created";
+                return response;
+            }
+
             var flight = new Domain.Flight
             {
                 FlightNumber = model.FlightNumber,
@@ -59,14 +66,11 @@ namespace Application.Features.Flight.Commands.Create
                 CreatedAt = DateTime.Now,
             };
 
-            if (IsFlightExist)
-            {
-                response.Message = "This flight is already created";
-                return response;
-            }
+
             _context.Flights.Add(flight);
             await _context.SaveChangesAsync();
 
+            response.StatusCode = HttpStatusCode.OK;
             response.Message = "flight Craeted successfully";
             response.Data = flight.Id;
 

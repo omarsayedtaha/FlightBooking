@@ -4,11 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Azure.Core;
-using CommonDefenitions;
-using CommonDefenitions.Dtos.Flight;
+using Application.Common;
+using Application.Dtos.Flight;
+using Application.Interfaces;
 using Domain;
-using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,21 +15,21 @@ namespace Application.Features.Flight.Queries
 {
     public class GetFlightsWithFilter : BaseServices<Domain.Flight, FlightRequest>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public GetFlightsWithFilter(ApplicationDbContext context)
+        public GetFlightsWithFilter(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<BaseResponse<IEnumerable<FlightDto>>> Get(BaseRequest<FlightRequest> request)
+        public async Task<PaginatedResponse<IEnumerable<FlightDto>>> Get(BaseRequest<FlightRequest> request)
         {
-            BaseResponse<IEnumerable<FlightDto>> response = new BaseResponse<IEnumerable<FlightDto>>();
+            PaginatedResponse<IEnumerable<FlightDto>> response = new PaginatedResponse<IEnumerable<FlightDto>>();
             response.StatusCode = HttpStatusCode.OK;
             response.Message = string.Empty;
             response.Data = null;
 
-            var query = _context.Flights.AsQueryable();
+            var query = _context.Flights.AsQueryable().AsNoTracking();
 
             if (request.Filter != null)
                 query = ApplyFilter(query, request);
@@ -48,7 +47,13 @@ namespace Application.Features.Flight.Queries
                 }
             }
 
-            var flights = query.Where(f=>f.NumberOfSeatsAvialable<f.NumberOfSeats).ToList();
+            // Only flights departing in ≤ 1 hour and with available seats
+            // query = query.Where(f =>
+            //     f.NumberOfSeatsAvialable < f.NumberOfSeats &&
+            //     f.DepartureTime > DateTime.Now &&
+            //     f.DepartureTime <= DateTime.Now.AddHours(1));
+
+            var flights = await query.ToListAsync();
 
             if (!flights.Any())
             {
@@ -106,6 +111,16 @@ namespace Application.Features.Flight.Queries
             {
                 query = query.Where(f => f.Airline == search);
             }
+            return query;
+        }
+
+        public override IQueryable<Domain.Flight> ApplyPagination(IQueryable<Domain.Flight> query, int PageIndex, int PageSize)
+        {
+            if (PageIndex > 1)
+                query = query.Skip(PageSize * (PageIndex - 1)).Take(PageSize);
+            else
+                query = query.Take(PageSize);
+
             return query;
         }
     }

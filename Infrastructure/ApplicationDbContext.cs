@@ -1,12 +1,16 @@
-﻿using Domain;
+﻿using Application.Interfaces;
+using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
-    public class ApplicationDbContext:IdentityDbContext<User,IdentityRole<Guid>,Guid>
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IApplicationDbContext
     {
+        public DbSet<Flight> Flights { get; set; }
+        public DbSet<FlightBookings> Bookings { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -15,9 +19,6 @@ namespace Infrastructure
         {
 
         }
-        public DbSet<Flight> Flights { get; set; }
-        public DbSet<FlightBookings> Bookings { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -26,5 +27,7 @@ namespace Infrastructure
             builder.Entity<IdentityUserRole<Guid>>().ToTable("UserRoles");
             builder.Entity<IdentityRole<Guid>>().ToTable("Roles");
         }
+
+
     }
 }

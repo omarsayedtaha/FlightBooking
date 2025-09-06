@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonDefenitions
+namespace Domian.Enums
 {
   public enum BookingStatus
-    {
-        Failed ,
-        Pending, 
-        Succeded ,
-        Canceled
-    }
+  {
+    Failed,
+    Pending,
+    Succeded,
+    Canceled
+  }
 }
