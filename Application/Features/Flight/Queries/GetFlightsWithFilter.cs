@@ -48,10 +48,10 @@ namespace Application.Features.Flight.Queries
             }
 
             // Only flights departing in ≤ 1 hour and with available seats
-            // query = query.Where(f =>
-            //     f.NumberOfSeatsAvialable < f.NumberOfSeats &&
-            //     f.DepartureTime > DateTime.Now &&
-            //     f.DepartureTime <= DateTime.Now.AddHours(1));
+            query = query.Where(f =>
+                f.NumberOfSeatsAvialable < f.NumberOfSeats &&
+                f.DepartureTime > DateTime.Now &&
+                f.DepartureTime <= DateTime.Now.AddHours(1));
 
             var flights = await query.ToListAsync();
 
