@@ -1,18 +1,24 @@
-# FlightBooking
+# FlightBooking API
 
 ## Overview
-**FlightBooking** is a backend project designed to manage flight booking systems. This application provides functionalities to handle flights, passengers, and booking processes. It ensures a seamless experience for both users and administrators.
+FlightBooking API is a backend system for managing flight reservations. It allows users to browse, book, and manage flights efficiently. Built using **ASP.NET Core** with **Clean Architecture** principles.
 
 ## Features
-- **Flight Management**: Create, update, and manage flights with relevant details.
-- **Passenger Management**: Add and manage passenger details.
-- **Booking System**: Facilitate flight reservations and manage bookings efficiently.
-- **Validation**: Includes features to validate duplicate data such as emails or booking records.
+- Browse available flights
+- Book and cancel reservations
+- Manage users (authentication and authorization)
+- Filter and search flights by date, destination, and airline
+- Well-structured Clean Architecture (Domain, Application, Infrastructure layers)
 
-## Technologies Used
-- **.NET Core**: Backend development framework.
-- **Entity Framework Core**: ORM for database management.
-- **SQL Server**: Database to store application data.
-- **Fluent Validation**: Library for robust data validation.
-- **ASP.NET Identity**: Authentication and authorization framework.
-- **Clean Architecture**: Ensures separation of concerns and maintainability by organizing code into layers such as Application, Domain, Infrastructure, and Presentation.
+## Technologies
+- ASP.NET Core 6
+- Entity Framework Core
+- SQL Server
+- AutoMapper
+- JWT Authentication
+
+## Getting Started
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/omarsayedtaha/FlightBooking.git
+
