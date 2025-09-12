@@ -17,8 +17,5 @@ FlightBooking API is a backend system for managing flight reservations. It allow
 - AutoMapper
 - JWT Authentication
 
-## Getting Started
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/omarsayedtaha/FlightBooking.git
+
 
