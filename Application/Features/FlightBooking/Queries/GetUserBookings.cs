@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -14,20 +15,23 @@ namespace Application.Features.Booking.Queries
     public class GetUserBookings
     {
         private readonly IApplicationDbContext _context;
+        private readonly AppHelperSerivices _appHelperSerivices;
 
-        public GetUserBookings(IApplicationDbContext context)
+        public GetUserBookings(IApplicationDbContext context, AppHelperSerivices appHelperSerivices)
         {
             _context = context;
+            _appHelperSerivices = appHelperSerivices;
         }
 
-        public async Task<PaginatedResponse<IEnumerable<BookingDto>>> GetAll(Guid UserId)
+        public async Task<PaginatedResponse<IEnumerable<BookingDto>>> GetAll()
         {
             var response = new PaginatedResponse<IEnumerable<BookingDto>>();
             response.StatusCode = HttpStatusCode.OK;
             response.Message = string.Empty;
             response.Data = null;
 
-            var booking = _context.Bookings.Where(b => b.UserId == UserId && !b.IsCanceled).ToList();
+            var userId = await _appHelperSerivices.GetUserIdAsync();
+            var booking = _context.Bookings.FirstOrDefault(b => b.UserId == userId);
 
             if (booking == null)
             {
@@ -35,16 +39,16 @@ namespace Application.Features.Booking.Queries
                 response.Message = "You don't have any booking";
             }
 
-            response.Data = booking.Select(b => new BookingDto()
+            response.Data = booking.FlightBookings.Select(b => new BookingDto()
             {
                 Id = b.Id,
                 FlightId = b.FlightId,
-                UserId = b.UserId,
-                BookingDate = b.BookingDate,
-                NumberOfBookedSeats = b.NumberOfBookedSeats,
+                UserId = userId,
+                BookingDate = booking.CreatedAt,
+                NumberOfBookedSeats = b.Flight.NumberOfBookedSeats,
                 Status = b.Status,
-                TravelDate = b.TravelDate,
-                TotalCost = b.TotalCost,
+                TravelDate = b.DepartureDate,
+                TotalCost = b.Price
 
             }).ToList();
 

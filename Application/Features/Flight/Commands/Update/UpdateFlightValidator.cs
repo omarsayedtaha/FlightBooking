@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos.Flight;
+using Domian.Enums;
 using FluentValidation;
 
 namespace Application.Features.Flight.Commands.Update
@@ -27,6 +28,11 @@ namespace Application.Features.Flight.Commands.Update
                 .NotEmpty().WithMessage("Departure location is required.")
                 .MaximumLength(100).WithMessage("Departure location must not exceed 100 characters.");
 
+            RuleFor(f => f.Class)
+                .NotEmpty().WithMessage("Class is required.")
+                .Must(x => Enum.GetNames(typeof(SeatClass)).Contains(x))
+                .WithMessage($"Flight Class vlaue must be one of these [{String.Join(",", Enum.GetNames(typeof(SeatClass)))}] ");
+
             RuleFor(f => f.ArrivalLocation)
                 .NotEmpty().WithMessage("Arrival location is required.")
                 .MaximumLength(100).WithMessage("Arrival location must not exceed 100 characters.");
@@ -41,9 +47,6 @@ namespace Application.Features.Flight.Commands.Update
             RuleFor(f => f.NumberOfSeats)
                 .GreaterThan(0).WithMessage("Number of seats must be greater than 0.")
                 .LessThanOrEqualTo(900).WithMessage("Number of seats must not exceed 900.");
-
-            RuleFor(f => f.Price)
-                .GreaterThan(0).WithMessage("Price must be greater than 0.");
         }
     }
 }

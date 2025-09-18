@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Application.Common;
 using Application.Dtos.Flight;
 using Application.Interfaces;
+using Domain.Entities;
+using Domian.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Flight.Commands.Create
@@ -16,16 +18,22 @@ namespace Application.Features.Flight.Commands.Create
     {
         private readonly IApplicationDbContext _context;
 
+        public static readonly string[] SeatNumbers =
+        {
+            "1A","1B","1C","1D",
+            "2A","2B","2C","2D",
+            "3A","3B","3C","3D"
+        };
         public CreateFlight(IApplicationDbContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
-        public async Task<BaseResponse<Guid>> Create(CreateFlightDto model)
+        public async Task<BaseResponse<int>> Create(CreateFlightDto model)
         {
-            var response = new BaseResponse<Guid>();
+            var response = new BaseResponse<int>();
             response.Message = string.Empty;
-            response.Data = Guid.Empty;
+            response.Data = 0;
 
             var Validator = new CreateFlightValidator();
             var result = Validator.Validate(model);
@@ -44,7 +52,6 @@ namespace Application.Features.Flight.Commands.Create
                  f.DepartureLocation == model.DepartureLocation &&
                  f.DepartureTime == model.DepartureTime &&
                  f.NumberOfSeats == model.NumberOfSeats &&
-                 f.Price == model.Price &&
                  f.CreatedAt == DateTime.Now);
 
             if (IsFlightExist)
@@ -52,8 +59,7 @@ namespace Application.Features.Flight.Commands.Create
                 response.Message = "This flight is already created";
                 return response;
             }
-
-            var flight = new Domain.Flight
+            var flight = new Domain.Entities.Flight
             {
                 FlightNumber = model.FlightNumber,
                 Airline = model.Airline,
@@ -62,12 +68,35 @@ namespace Application.Features.Flight.Commands.Create
                 DepartureLocation = model.DepartureLocation,
                 DepartureTime = model.DepartureTime,
                 NumberOfSeats = model.NumberOfSeats,
-                Price = model.Price,
                 CreatedAt = DateTime.Now,
             };
 
-
             _context.Flights.Add(flight);
+
+
+            var SeatClass = new FlightSeatClass()
+            {
+                FlightId = flight.Id,
+                Class = (SeatClass)Enum.Parse(typeof(SeatClass), model.Class),
+                Price = model.Price
+            };
+
+            _context.FlightSeatClass.Add(SeatClass);
+
+
+            var Seats = new List<Seat>();
+            for (int i = 0; i < SeatNumbers.Count(); i++)
+            {
+                Seats.Add(new Seat()
+                {
+                    FlightId = flight.Id,
+                    SeatNumber = SeatNumbers[i],
+                    IsBooked = false
+                });
+            }
+
+
+            _context.Seats.AddRange(Seats);
             await _context.SaveChangesAsync();
 
             response.StatusCode = HttpStatusCode.OK;
@@ -77,5 +106,7 @@ namespace Application.Features.Flight.Commands.Create
             return response;
 
         }
+
+
     }
 }

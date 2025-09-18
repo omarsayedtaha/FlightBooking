@@ -2,6 +2,7 @@
 using System.Reflection.Metadata.Ecma335;
 using Application.Common;
 using Domain;
+using Domain.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

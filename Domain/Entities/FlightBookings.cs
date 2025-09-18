@@ -5,23 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Domain.Entities
 {
     public class FlightBookings
     {
-        public Guid Id { get; set; }
-        public Guid FlightId { get; set; }
-        public Guid UserId { get; set; }
-        public int NumberOfBookedSeats { get; set; }
-        public DateTime BookingDate { get; set; }
-        public DateTime TravelDate { get; set; }
-        public string Status { get; set; }
-        public decimal TotalCost { get; set; }
-        public bool IsCanceled { get; set; }
+        public int Id { get; set; }
+        public int FlightId { get; set; }
+        public int BookingId { get; set; }
+        public int SeatId { get; set; }
+        public string PassengerName { get; set; }
+        public string PassportNumber { get; set; }
+        public DateTime DepartureDate { get; set; }
+        public DateTime ArrivalDate { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime? CancellationDate { get; set; }
-        public User User { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public decimal Price { get; set; }
+        public string Status { get; set; }
         public Flight Flight { get; set; }
+        public Booking Booking { get; set; }
+        public Seat Seat { get; set; }
+
+
     }
 }

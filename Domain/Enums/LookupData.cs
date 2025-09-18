@@ -10,7 +10,23 @@ namespace Domian.Enums
   {
     Failed,
     Pending,
-    Succeded,
-    Canceled
+    Confirmed
+
   }
+
+  public enum SeatClass
+  {
+    Economy,
+    Business,
+    First
+  }
+
+  public enum PaymentStatus
+  {
+    pending,
+    failed,
+    Succeded
+
+  }
+
 }

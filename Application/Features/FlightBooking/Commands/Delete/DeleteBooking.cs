@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Interfaces;
+using Domian.Enums;
 
 namespace Application.Features.Booking.Commands.Delete
 {
@@ -18,21 +19,21 @@ namespace Application.Features.Booking.Commands.Delete
             _context = context;
         }
 
-        public async Task<BaseResponse<Guid>> CancelBooking(Guid bookingId)
+        public async Task<BaseResponse<int>> CancelBooking(int bookingId)
         {
-            var response = new BaseResponse<Guid>();
+            var response = new BaseResponse<int>();
             response.StatusCode = HttpStatusCode.OK;
             response.Message = string.Empty;
-            response.Data = Guid.Empty;
+            response.Data = 0;
 
-            if (bookingId == Guid.Empty)
+            if (bookingId == 0)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = "flightId is required";
                 return response;
             }
 
-            var booking = _context.Bookings.FirstOrDefault(f => f.Id == bookingId);
+            var booking = _context.Bookings.FirstOrDefault(f => f.Id == bookingId && f.Status == BookingStatus.Pending.ToString());
 
             if (booking == null)
             {
@@ -41,14 +42,10 @@ namespace Application.Features.Booking.Commands.Delete
                 return response;
             }
 
-            booking.IsCanceled = true;
-            booking.CancellationDate = DateTime.Now;
-
-            _context.Bookings.Update(booking);
+            _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
 
             response.Message = "Booking cancelled";
-            response.Data = booking.Id;
             return response;
         }
     }

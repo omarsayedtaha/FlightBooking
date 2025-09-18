@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Application.Common;
 using Application.Interfaces;
 using Domain;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +53,7 @@ public class ForgetPassword
 
         if (!otp.IsValid() || otp.IsUsed)
             return new BaseResponse<string>(HttpStatusCode.BadRequest, "InValid Otp", string.Empty);
+
         var useremail = StaticData.UserOtps.FirstOrDefault(x => x.Value == otp).Key;
         var user = await userManager.FindByEmailAsync(useremail);
         if (user == null)

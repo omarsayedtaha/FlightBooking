@@ -27,7 +27,7 @@ namespace Booking.Controllers
         }
 
         [HttpPost("create-flight")]
-        [Authorize(Roles = "Admin,SuperAdmin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] CreateFlightDto model)
         {
             var CreateFlightService = new CreateFlight(_context);
@@ -37,7 +37,7 @@ namespace Booking.Controllers
         }
 
         [HttpPut("update-flight")]
-        [Authorize(Roles = "Admin,SuperAdmin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] UpdateFlightDto model)
         {
             var UpdateFlightService = new UpdateFlight(_context);
@@ -54,6 +54,13 @@ namespace Booking.Controllers
             return Ok(flights);
         }
 
+        [HttpGet("get-flights-with-Id/{Id}")]
+        public async Task<IActionResult> GetWithId([FromRoute] int Id)
+        {
+            var Service = new GetFlightWithId(_context);
+            var flights = await Service.GetWithId(Id);
+            return Ok(flights);
+        }
 
 
     }

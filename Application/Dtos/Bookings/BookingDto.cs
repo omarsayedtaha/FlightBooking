@@ -8,9 +8,9 @@ namespace Application.Dtos.Bookings
 {
     public class BookingDto
     {
-        public Guid Id { get; set; }
-        public Guid FlightId { get; set; }
-        public Guid UserId { get; set; }
+        public int Id { get; set; }
+        public int FlightId { get; set; }
+        public string UserId { get; set; }
         public int NumberOfBookedSeats { get; set; }
         public DateTime BookingDate { get; set; }
         public DateTime TravelDate { get; set; }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Dtos.Flight;
+using Application.Dtos.Seats.SeatDto;
 using Application.Interfaces;
 using Domain;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Features.Flight.Queries
 {
-    public class GetFlightsWithFilter : BaseServices<Domain.Flight, FlightRequest>
+    public class GetFlightsWithFilter : BaseServices<Domain.Entities.Flight, FlightRequest>
     {
         private readonly IApplicationDbContext _context;
 
@@ -39,18 +40,19 @@ namespace Application.Features.Flight.Queries
 
             if (!string.IsNullOrEmpty(request.Orderby))
             {
-                if (request.Orderby.ToLower() == "Price".ToLower())
-                {
-                    query = request.IsAscending.Value ?
-                    query.OrderBy(f => f.Price)
-                  : query.OrderByDescending(f => f.Price);
-                }
+                // if (request.Orderby.ToLower() == "Price".ToLower())
+                // {
+                //     query = request.IsAscending.Value ?
+                //     query.OrderBy(f => f.Price)
+                //   : query.OrderByDescending(f => f.Price);
+                // }
             }
+
 
             // Only flights departing in ≤ 1 hour and with available seats
             query = query.Where(f =>
-                f.NumberOfSeatsAvialable < f.NumberOfSeats &&
-                f.DepartureTime > DateTime.Now &&
+                f.NumberOfSeatsAvialable < f.NumberOfSeats ||
+                f.DepartureTime > DateTime.Now ||
                 f.DepartureTime <= DateTime.Now.AddHours(1));
 
             var flights = await query.ToListAsync();
@@ -73,19 +75,14 @@ namespace Application.Features.Flight.Queries
                 ArrivalTime = f.ArrivalTime.ToString("t"),
                 Duration = f.CalculateDuration(f.DepartureTime, f.ArrivalTime),
                 FlightNumber = f.FlightNumber,
-                Price = f.Price
             }).ToList();
 
             return response;
         }
 
-        public override IQueryable<Domain.Flight> ApplyFilter(IQueryable<Domain.Flight> query, BaseRequest<FlightRequest> request)
+        public override IQueryable<Domain.Entities.Flight> ApplyFilter(IQueryable<Domain.Entities.Flight> query, BaseRequest<FlightRequest> request)
         {
-            if (request.Filter.Id.HasValue)
-            {
-                query = query.Where(f => f.Id == request.Filter.Id.Value);
 
-            }
             if (request.Filter.Date > DateTime.MinValue)
             {
 
@@ -104,7 +101,7 @@ namespace Application.Features.Flight.Queries
             return query;
         }
 
-        public override IQueryable<Domain.Flight> ApplySearch(IQueryable<Domain.Flight> query, string search)
+        public override IQueryable<Domain.Entities.Flight> ApplySearch(IQueryable<Domain.Entities.Flight> query, string search)
         {
 
             if (!string.IsNullOrEmpty(search))
@@ -114,7 +111,7 @@ namespace Application.Features.Flight.Queries
             return query;
         }
 
-        public override IQueryable<Domain.Flight> ApplyPagination(IQueryable<Domain.Flight> query, int PageIndex, int PageSize)
+        public override IQueryable<Domain.Entities.Flight> ApplyPagination(IQueryable<Domain.Entities.Flight> query, int PageIndex, int PageSize)
         {
             if (PageIndex > 1)
                 query = query.Skip(PageSize * (PageIndex - 1)).Take(PageSize);

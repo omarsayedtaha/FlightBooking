@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using IMailService = Application.Interfaces.IMailService;
 using IApplicationDbContext = Application.Interfaces.IApplicationDbContext;
+using Domain.Entities;
 
 
 namespace Booking.Helper
@@ -28,7 +29,7 @@ namespace Booking.Helper
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddIdentity<User, IdentityRole<Guid>>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = true;
@@ -61,17 +62,18 @@ namespace Booking.Helper
                 };
             });
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("MyCorsPolicy", policy =>
-                {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
-                });
-            });
+            // services.AddCors(options =>
+            // {
+            //     options.AddPolicy("MyCorsPolicy", policy =>
+            //     {
+            //         policy.AllowAnyOrigin()
+            //               .AllowAnyMethod()
+            //               .AllowAnyHeader();
+            //     });
+            // });
 
             services.Configure<MailSettings>(config.GetSection(MailSettings.MailOptionsKey));
+            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             services.AddScoped<IMailService, EmailService>();
             services.AddScoped<BaseRequest>();
             services.AddScoped<AppHelperSerivices>();

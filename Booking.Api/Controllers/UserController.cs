@@ -7,6 +7,7 @@ using Application.Features.User.Register;
 using Application.Features.User.Register.Commands;
 using Application.Interfaces;
 using Domain;
+using Domain.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace Booking.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<User> userManager;
-        private readonly RoleManager<IdentityRole<Guid>> roleManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly IApplicationDbContext applicationDbContext;
         private readonly IConfiguration configuration;
         private readonly SignInManager<User> signInManager;
@@ -28,7 +29,7 @@ namespace Booking.Controllers
         private readonly AppHelperSerivices appHelper;
 
         public UserController(UserManager<User> userManager,
-            RoleManager<IdentityRole<Guid>> roleManager,
+            RoleManager<IdentityRole> roleManager,
             IApplicationDbContext applicationDbContext, IConfiguration configuration
             , SignInManager<User> signInManager, IMailService mailService, AppHelperSerivices appHelper)
         {

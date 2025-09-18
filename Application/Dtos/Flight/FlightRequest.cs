@@ -8,8 +8,6 @@ namespace Application.Dtos.Flight
 {
     public class FlightRequest
     {
-        public Guid? Id { get; set; }
-
         public DateTime Date { get; set; }
         public string from { get; set; }
 

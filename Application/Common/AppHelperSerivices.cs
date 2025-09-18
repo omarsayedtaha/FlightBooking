@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Domain;
+using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,7 +17,7 @@ namespace Application.Common
             _userManager = userManager;
         }
 
-        public async Task<Guid> GetUserIdAsync()
+        public async Task<string> GetUserIdAsync()
         {
             var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (username == null)

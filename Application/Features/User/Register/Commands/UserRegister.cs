@@ -7,18 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Dtos.User;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Application.Features.User.Register.Commands
 {
     public class UserRegister
     {
-        private readonly UserManager<Domain.User> userManager;
-        private readonly RoleManager<IdentityRole<Guid>> roleManager;
+        private readonly UserManager<Domain.Entities.User> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IApplicationDbContext _dbContext;
 
-        public UserRegister(UserManager<Domain.User> userManager,
-            RoleManager<IdentityRole<Guid>> roleManager)
+        public UserRegister(UserManager<Domain.Entities.User> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -45,10 +48,8 @@ namespace Application.Features.User.Register.Commands
                 return response;
             }
 
-
-            var User = new Domain.User
+            var User = new Domain.Entities.User
             {
-                Id = Guid.NewGuid(),
                 Email = registerDto.Email,
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
@@ -59,18 +60,25 @@ namespace Application.Features.User.Register.Commands
                 PhoneNumber = registerDto.PhoneNumber,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
-            bool IsFirstUser = !userManager.Users.Any();
-            var check = await userManager.CreateAsync(User, registerDto.Password);
-            if (IsFirstUser)
+
+            var check = new IdentityResult();
+            if (!userManager.Users.Any())
             {
-                await userManager.AddToRoleAsync(User, "SuperAdmin");
+                User.IsAdmin = true;
+                check = await userManager.CreateAsync(User, registerDto.Password);
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+                await userManager.AddToRoleAsync(User, "Admin");
+
             }
             else
             {
+                check = await userManager.CreateAsync(User, registerDto.Password);
                 await userManager.AddToRoleAsync(User, "User");
 
             }
-            if (!check.Succeeded)
+            if (check.Succeeded)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = $"Registration failed : {string.Join(",", check.Errors.Select(x => x.Description))}";

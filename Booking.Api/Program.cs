@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Text;
+using Application.Interfaces;
 using Booking.Helper;
 using CommonDefenitions.Helper;
 using Domain;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Stripe;
 
 namespace Bookings
 {
@@ -56,6 +58,7 @@ namespace Bookings
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddServices(builder.Configuration);
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

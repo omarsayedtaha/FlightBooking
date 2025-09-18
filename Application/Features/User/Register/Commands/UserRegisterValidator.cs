@@ -12,9 +12,9 @@ namespace Application.Features.User.Register.Commands
     public class UserRegisterValidator : AbstractValidator<RegisterDto>
     {
         private readonly string email;
-        private readonly UserManager<Domain.User> _userManager;
+        private readonly UserManager<Domain.Entities.User> _userManager;
 
-        public UserRegisterValidator(string email, UserManager<Domain.User> userManager)
+        public UserRegisterValidator(string email, UserManager<Domain.Entities.User> userManager)
         {
             this.email = email;
             _userManager = userManager;

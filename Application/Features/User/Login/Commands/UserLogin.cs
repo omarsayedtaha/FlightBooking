@@ -21,13 +21,12 @@ namespace Application.Features.User.Login.Commands
 {
     public class UserLogin
     {
-        private readonly UserManager<Domain.User> userManager;
-        private readonly SignInManager<Domain.User> signInManager;
+        private readonly UserManager<Domain.Entities.User> userManager;
+        private readonly SignInManager<Domain.Entities.User> signInManager;
         private readonly IConfiguration configuration;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public UserLogin(UserManager<Domain.User> userManager
-            , SignInManager<Domain.User> signInManager,
+        public UserLogin(UserManager<Domain.Entities.User> userManager
+            , SignInManager<Domain.Entities.User> signInManager,
             IConfiguration configuration)
         {
             this.userManager = userManager;
@@ -84,7 +83,7 @@ namespace Application.Features.User.Login.Commands
             return response;
         }
 
-        public async Task<string> GenerateToken(Domain.User user)
+        public async Task<string> GenerateToken(Domain.Entities.User user)
         {
             var claims = new List<Claim>
             {

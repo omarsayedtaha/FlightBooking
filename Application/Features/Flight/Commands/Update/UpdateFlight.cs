@@ -20,11 +20,11 @@ namespace Application.Features.Flight.Commands.Update
         {
             _context = contex;
         }
-        public async Task<BaseResponse<Guid>> Update(UpdateFlightDto model)
+        public async Task<BaseResponse<int>> Update(UpdateFlightDto model)
         {
-            var response = new BaseResponse<Guid>();
+            var response = new BaseResponse<int>();
             response.Message = string.Empty;
-            response.Data = Guid.Empty;
+            response.Data = 0;
 
             var flight = await _context.Flights.FirstOrDefaultAsync(f => f.Id == model.FlightId);
 
@@ -51,7 +51,6 @@ namespace Application.Features.Flight.Commands.Update
             flight.DepartureLocation = model.DepartureLocation;
             flight.DepartureTime = model.DepartureTime;
             flight.NumberOfSeats = model.NumberOfSeats;
-            flight.Price = model.Price;
             flight.CreatedAt = DateTime.Now;
 
 
