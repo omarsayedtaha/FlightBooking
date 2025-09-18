@@ -11,11 +11,11 @@ FlightBooking API is a backend system for managing flight reservations. It allow
 - Well-structured Clean Architecture (Domain, Application, Infrastructure layers)
 
 ## Technologies
-- ASP.NET Core 6
+- ASP.NET Core 8
 - Entity Framework Core
 - SQL Server
-- AutoMapper
 - JWT Authentication
+- Stripe
 
 
 
