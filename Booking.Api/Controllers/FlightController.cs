@@ -17,21 +17,30 @@ namespace Booking.Controllers
     [ApiController]
     public class FlightController : ControllerBase
     {
-        private readonly IApplicationDbContext _context;
-        private readonly BaseRequest _request;
 
-        public FlightController(IApplicationDbContext context, BaseRequest request)
+        private readonly CreateFlight createFlight;
+        private readonly UpdateFlight updateFlight;
+        private readonly GetFlightsWithFilter getFlightsWithFilter;
+        private readonly GetFlightWithId getFlightWithId;
+
+        public FlightController(
+         CreateFlight createFlight,
+          UpdateFlight updateFlight,
+          GetFlightsWithFilter getFlightsWithFilter,
+          GetFlightWithId getFlightWithId)
         {
-            _context = context;
-            _request = request;
+
+            this.createFlight = createFlight;
+            this.updateFlight = updateFlight;
+            this.getFlightsWithFilter = getFlightsWithFilter;
+            this.getFlightWithId = getFlightWithId;
         }
 
         [HttpPost("create-flight")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] CreateFlightDto model)
         {
-            var CreateFlightService = new CreateFlight(_context);
-            var result = await CreateFlightService.Create(model);
+            var result = await createFlight.Create(model);
 
             return Ok(result);
         }
@@ -40,8 +49,7 @@ namespace Booking.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] UpdateFlightDto model)
         {
-            var UpdateFlightService = new UpdateFlight(_context);
-            var result = await UpdateFlightService.Update(model);
+            var result = await updateFlight.Update(model);
 
             return Ok(result);
         }
@@ -49,16 +57,14 @@ namespace Booking.Controllers
         [HttpGet("get-flights-with-filter")]
         public async Task<IActionResult> GetWithFilter([FromQuery] BaseRequest<FlightRequest> flightFilter)
         {
-            var Service = new GetFlightsWithFilter(_context);
-            var flights = await Service.Get(flightFilter);
+            var flights = await getFlightsWithFilter.Get(flightFilter);
             return Ok(flights);
         }
 
         [HttpGet("get-flights-with-Id/{Id}")]
         public async Task<IActionResult> GetWithId([FromRoute] int Id)
         {
-            var Service = new GetFlightWithId(_context);
-            var flights = await Service.GetWithId(Id);
+            var flights = await getFlightWithId.GetWithId(Id);
             return Ok(flights);
         }
 

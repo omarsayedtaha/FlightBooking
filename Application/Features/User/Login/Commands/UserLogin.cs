@@ -24,14 +24,16 @@ namespace Application.Features.User.Login.Commands
         private readonly UserManager<Domain.Entities.User> userManager;
         private readonly SignInManager<Domain.Entities.User> signInManager;
         private readonly IConfiguration configuration;
+        private readonly ITokenService tokenService;
 
         public UserLogin(UserManager<Domain.Entities.User> userManager
             , SignInManager<Domain.Entities.User> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration, ITokenService tokenService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
+            this.tokenService = tokenService;
         }
 
         public async Task<BaseResponse<UserDto>> Login(LoginDto loginmodel)
@@ -61,9 +63,9 @@ namespace Application.Features.User.Login.Commands
                 return response;
             }
             //Update user table to add token 
-            user.Token = await GenerateToken(user);
-            // user.RefreshToken = Guid.NewGuid();
-            // user.RefreshTokenExpiryDate = DateTime.Now.AddMonths(2);
+            user.Token = await tokenService.GenerateToken(user);
+            user.RefreshToken = Guid.NewGuid().ToString();
+            user.RefreshTokenExpiryDate = DateTime.Now.AddMonths(1);
             await userManager.UpdateAsync(user);
 
             response.StatusCode = HttpStatusCode.OK;
@@ -77,39 +79,10 @@ namespace Application.Features.User.Login.Commands
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 Token = user.Token,
-                // RefreshToken = user.RefreshToken,
+                RefreshToken = user.RefreshToken,
 
             };
             return response;
-        }
-
-        public async Task<string> GenerateToken(Domain.Entities.User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Sid,user.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier,user.UserName),
-                new Claim(ClaimTypes.Name,$"{user.FirstName} {user.LastName}"),
-            };
-            var Roles = await userManager.GetRolesAsync(user);
-            foreach (var role in Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]));
-
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var tokenDescriptor = new JwtSecurityToken(
-                issuer: configuration["Jwt:Issuer"],
-                audience: configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddMonths(1),
-                signingCredentials: credentials);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            return tokenHandler.WriteToken(tokenDescriptor);
         }
 
     }

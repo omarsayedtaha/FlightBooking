@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ess;
 
 namespace Booking.Controllers
 {
@@ -20,33 +21,29 @@ namespace Booking.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserManager<User> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IApplicationDbContext applicationDbContext;
-        private readonly IConfiguration configuration;
-        private readonly SignInManager<User> signInManager;
-        private readonly IMailService mailService;
-        private readonly AppHelperSerivices appHelper;
+        private readonly UserRegister userRegister;
+        private readonly UserLogin userLogin;
+        private readonly ForgetPassword forgetPassword;
+        private readonly UserLogout userLogout;
+        private readonly RefreshUserToken refreshUserToken;
 
-        public UserController(UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IApplicationDbContext applicationDbContext, IConfiguration configuration
-            , SignInManager<User> signInManager, IMailService mailService, AppHelperSerivices appHelper)
+        public UserController(
+            UserRegister userRegister,
+            UserLogin userLogin,
+            ForgetPassword forgetPassword,
+            UserLogout userLogout,
+            RefreshUserToken refreshUserToken)
         {
-            this.userManager = userManager;
-            this.roleManager = roleManager;
-            this.applicationDbContext = applicationDbContext;
-            this.configuration = configuration;
-            this.signInManager = signInManager;
-            this.mailService = mailService;
-            this.appHelper = appHelper;
+            this.userRegister = userRegister;
+            this.userLogin = userLogin;
+            this.forgetPassword = forgetPassword;
+            this.userLogout = userLogout;
+            this.refreshUserToken = refreshUserToken;
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            var Service = new UserRegister(userManager, roleManager);
-
-            var User = await Service.Register(registerDto);
+            var User = await userRegister.Register(registerDto);
 
             return Ok(User);
         }
@@ -54,9 +51,8 @@ namespace Booking.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var Service = new UserLogin(userManager, signInManager, configuration);
 
-            var User = await Service.Login(loginDto);
+            var User = await userLogin.Login(loginDto);
 
             return Ok(User);
         }
@@ -65,8 +61,7 @@ namespace Booking.Controllers
         [HttpGet("forgetPassword/{email}")]
         public async Task<IActionResult> ForgetPassword(string email)
         {
-            var service = new ForgetPassword(userManager, mailService, configuration);
-            var result = await service.SendOTP(email);
+            var result = await forgetPassword.SendOTP(email);
             return Ok(result);
 
         }
@@ -75,22 +70,24 @@ namespace Booking.Controllers
         [HttpPut("resetpassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
-            var service = new ForgetPassword(userManager, mailService, configuration);
-            var result = await service.ResetPassword(resetPasswordDto.otp, resetPasswordDto.Password);
+            var result = await forgetPassword.ResetPassword(resetPasswordDto.otp, resetPasswordDto.Password);
             return Ok(result);
 
         }
-
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var userId = await appHelper.GetUserIdAsync();
-            var user = await userManager.FindByIdAsync(userId.ToString());
-            user.Token = "";
-            await applicationDbContext.SaveChangesAsync();
-            string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            await signInManager.SignOutAsync();
-            return Ok("Logged out successfully");
+            await userLogout.Logout();
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("refresh-user-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshUserTokenDto refreshUserTokenDto)
+        {
+            return Ok(await refreshUserToken.RefreshToken(refreshUserTokenDto));
+
         }
     }
 }

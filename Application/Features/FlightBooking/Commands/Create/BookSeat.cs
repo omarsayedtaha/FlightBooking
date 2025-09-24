@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Application.Common;
+using Application.Common.services;
 using Application.Interfaces;
 using Domain;
 using Domain.Entities;
@@ -43,11 +44,10 @@ public class BookSeat
         if (seat.IsBooked)
             return new BaseResponse<string>(System.Net.HttpStatusCode.Conflict, "This Seat is already boked", string.Empty);
 
-        var userId = await _appHelper.GetUserIdAsync();
-        var user = await _userManager.FindByIdAsync(userId);
-        if (_dbContext.Bookings.Any(u => u.UserId == userId))
+        var user = await _appHelper.GetUserAsync();
+        if (_dbContext.Bookings.Any(u => u.UserId == user.Id))
         {
-            var userbooking = _dbContext.Bookings.Include(x => x.FlightBookings).FirstOrDefault(u => u.UserId == userId);
+            var userbooking = _dbContext.Bookings.Include(x => x.FlightBookings).FirstOrDefault(u => u.UserId == user.Id);
 
             if (userbooking == null)
                 return new BaseResponse<string>(System.Net.HttpStatusCode.NotFound, "user has no booking", string.Empty);
@@ -58,7 +58,7 @@ public class BookSeat
 
         var booking = new Booking
         {
-            UserId = userId,
+            UserId = user.Id,
             CreatedAt = DateTime.Now,
             Status = BookingStatus.Pending.ToString(),
             TravelDate = seat.Flight.DepartureTime

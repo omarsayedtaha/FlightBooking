@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.services;
 using Application.Interfaces;
 using Domain;
 using Domain.Entities;
@@ -38,14 +39,14 @@ namespace Application.Features.FlightBooking.Commands.Update
             response.Message = string.Empty;
             response.Data = null;
 
-            var userId = await _appHelper.GetUserIdAsync();
+            var user = await _appHelper.GetUserAsync();
 
             var userbookings = await _context.Bookings.Include(x => x.Payments)
             .Include(x => x.FlightBookings)
             .ThenInclude(f => f.Seat)
             .ThenInclude(s => s.SeatClass)
             .ThenInclude(x => x.Flight)
-            .FirstOrDefaultAsync(b => b.UserId == userId);
+            .FirstOrDefaultAsync(b => b.UserId == user.Id);
 
             if (userbookings == null)
             {

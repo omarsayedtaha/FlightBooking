@@ -4,7 +4,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Common
+namespace Application.Common.services
 {
     public class AppHelperSerivices
     {
@@ -17,22 +17,22 @@ namespace Application.Common
             _userManager = userManager;
         }
 
-        public async Task<string> GetUserIdAsync()
+        public async Task<User> GetUserAsync()
         {
-            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (username == null)
+            var useremail = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+            if (useremail == null)
             {
                 throw new Exception("Invalid Credentials");
 
             }
             else
             {
-                var user = await _userManager.FindByNameAsync(username);
+                var user = await _userManager.FindByEmailAsync(useremail);
                 if (user == null)
                 {
                     throw new Exception("Invalid Credentials");
                 }
-                return user.Id;
+                return user;
             }
         }
     }

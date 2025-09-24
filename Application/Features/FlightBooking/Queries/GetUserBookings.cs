@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.services;
 using Application.Dtos.Bookings;
 using Application.Interfaces;
 
@@ -30,8 +31,8 @@ namespace Application.Features.Booking.Queries
             response.Message = string.Empty;
             response.Data = null;
 
-            var userId = await _appHelperSerivices.GetUserIdAsync();
-            var booking = _context.Bookings.FirstOrDefault(b => b.UserId == userId);
+            var user = await _appHelperSerivices.GetUserAsync();
+            var booking = _context.Bookings.FirstOrDefault(b => b.UserId == user.Id);
 
             if (booking == null)
             {
@@ -43,7 +44,7 @@ namespace Application.Features.Booking.Queries
             {
                 Id = b.Id,
                 FlightId = b.FlightId,
-                UserId = userId,
+                UserId = user.Id,
                 BookingDate = booking.CreatedAt,
                 NumberOfBookedSeats = b.Flight.NumberOfBookedSeats,
                 Status = b.Status,

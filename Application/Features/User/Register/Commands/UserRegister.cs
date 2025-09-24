@@ -58,7 +58,7 @@ namespace Application.Features.User.Register.Commands
                 PassportNumber = registerDto.PassportNumber,
                 CreatedAt = DateTime.Now,
                 PhoneNumber = registerDto.PhoneNumber,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
             };
 
             var check = new IdentityResult();
@@ -78,7 +78,7 @@ namespace Application.Features.User.Register.Commands
                 await userManager.AddToRoleAsync(User, "User");
 
             }
-            if (check.Succeeded)
+            if (!check.Succeeded)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Message = $"Registration failed : {string.Join(",", check.Errors.Select(x => x.Description))}";

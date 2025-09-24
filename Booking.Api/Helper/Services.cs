@@ -16,6 +16,15 @@ using Microsoft.IdentityModel.Tokens;
 using IMailService = Application.Interfaces.IMailService;
 using IApplicationDbContext = Application.Interfaces.IApplicationDbContext;
 using Domain.Entities;
+using Application.Features.User.Register.Commands;
+using Application.Features.User.Login.Commands;
+using Application.Common.services;
+using Application.Features.Flight.Commands.Create;
+using Application.Features.Flight.Commands.Update;
+using Application.Features.Flight.Queries;
+using Application.Features.FlightBooking.Commands.Update;
+using Application.Features.Booking.Queries;
+using Application.Features.Booking.Commands.Delete;
 
 
 namespace Booking.Helper
@@ -77,6 +86,29 @@ namespace Booking.Helper
             services.AddScoped<IMailService, EmailService>();
             services.AddScoped<BaseRequest>();
             services.AddScoped<AppHelperSerivices>();
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<UserRegister>();
+            services.AddScoped<UserLogin>();
+            services.AddScoped<ForgetPassword>();
+            services.AddScoped<UserLogout>();
+            services.AddScoped<RefreshUserToken>();
+
+            services.AddScoped<CreateFlight>();
+            services.AddScoped<UpdateFlight>();
+            services.AddScoped<GetFlightsWithFilter>();
+            services.AddScoped<GetFlightWithId>();
+
+            services.AddScoped<BookSeat>();
+            services.AddScoped<ConfirmBooking>();
+            services.AddScoped<UpdateBookingStatus>();
+            services.AddScoped<GetUserBookings>();
+            services.AddScoped<DeleteBooking>();
+
+            services.AddScoped<ITokenService, TokenService>();
+
+
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.services;
 using Application.Features.Booking.Commands;
 using Application.Features.Booking.Commands.Delete;
 using Application.Features.Booking.Queries;
@@ -19,30 +20,29 @@ namespace Booking.Controllers
     [Authorize]
     public class FlightBookingController : ControllerBase
     {
-        private readonly IApplicationDbContext context;
-        private readonly AppHelperSerivices appHelper;
-        private readonly IConfiguration configuration;
-        private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly UserManager<User> userManager;
-        private readonly ConfirmBooking updateBooking;
+        private readonly BookSeat bookSeat;
+        private readonly ConfirmBooking confirmBooking;
+        private readonly UpdateBookingStatus updateBookingStatus;
+        private readonly GetUserBookings getUserBookings;
+        private readonly DeleteBooking deleteBooking;
 
-        public FlightBookingController(IApplicationDbContext context,
-            AppHelperSerivices appHelper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor
-            , UserManager<User> userManager)
+        public FlightBookingController(BookSeat bookSeat,
+        ConfirmBooking confirmBooking,
+        UpdateBookingStatus updateBookingStatus,
+        GetUserBookings getUserBookings,
+        DeleteBooking deleteBooking)
         {
-            this.context = context;
-            this.appHelper = appHelper;
-            this.configuration = configuration;
-            this.httpContextAccessor = httpContextAccessor;
-            this.userManager = userManager;
-            this.updateBooking = updateBooking;
+            this.bookSeat = bookSeat;
+            this.confirmBooking = confirmBooking;
+            this.updateBookingStatus = updateBookingStatus;
+            this.getUserBookings = getUserBookings;
+            this.deleteBooking = deleteBooking;
         }
 
         [HttpPost("book-a-seat")]
         public async Task<IActionResult> BookASeat([FromBody] SeatBookingRequest request)
         {
-            var bookingservice = new BookSeat(context, appHelper, userManager);
-            var result = await bookingservice.Book(request);
+            var result = await bookSeat.Book(request);
 
             return Ok(result);
         }
@@ -50,8 +50,7 @@ namespace Booking.Controllers
         [HttpGet("confirm-booking")]
         public async Task<IActionResult> ConfirmBooking()
         {
-            var bookingservice = new ConfirmBooking(context, appHelper);
-            var result = await bookingservice.Confirm();
+            var result = await confirmBooking.Confirm();
 
             return Ok(result);
         }
@@ -60,8 +59,7 @@ namespace Booking.Controllers
         [HttpPost("Update-booking-status")]
         public async Task<IActionResult> UpdateBooking(string sessionId)
         {
-            var bookingservice = new UpdateBookingStatus(context);
-            var result = await bookingservice.Update(sessionId);
+            var result = await updateBookingStatus.Update(sessionId);
 
             return Ok(result);
         }
@@ -69,8 +67,7 @@ namespace Booking.Controllers
         [HttpPost("get-user-booking-details")]
         public async Task<IActionResult> GetUserBookings()
         {
-            var bookingservice = new GetUserBookings(context, appHelper);
-            var result = await bookingservice.GetAll();
+            var result = await getUserBookings.GetAll();
 
             return Ok(result);
         }
@@ -78,8 +75,7 @@ namespace Booking.Controllers
         [HttpPost("cancel-booking")]
         public async Task<IActionResult> CancelBooking([FromBody] int bookingId)
         {
-            var bookingservice = new DeleteBooking(context);
-            var result = await bookingservice.CancelBooking(bookingId);
+            var result = await deleteBooking.CancelBooking(bookingId);
 
             return Ok(result);
         }
