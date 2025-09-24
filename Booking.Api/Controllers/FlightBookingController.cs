@@ -55,7 +55,6 @@ namespace Booking.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpPost("Update-booking-status")]
         public async Task<IActionResult> UpdateBooking(string sessionId)
         {
